@@ -4,23 +4,27 @@
  *  Created on: 18.11.2018
  *      Author: Przemek
  */
-#include <avr\io.h>
-#include "adc.h"
 
-#define IN 0
-#define OUT 1
+#include <avr\io.h>
+
+#include "adc.h"
+#include "port.h"
+#include "uart.h"
+
 
 int main(void){
 
-	/*Configure PORTA Pin 0*/
-	DDRA |= OUT << PIN0;	//set pin direction as output
-	PORTA |= 1 << PIN0;		//set pin value to high
-
+	portInit();
 	adcInit();
-
+	uartInit();
 	//
 
-	while(1);
+	while(1){
+		//wait for measurement trigger
+		//adcStart();
+		//wait for conversion finish
+		//send data via UART
+	}
 
 	return 0;
 }
