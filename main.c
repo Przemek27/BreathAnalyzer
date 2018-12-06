@@ -16,8 +16,14 @@ int main(void){
 
 	portInit();
 	adcInit();
-	uartInit();
-	//
+	uartInit(4800);
+
+	uartTransmit('t');
+	uartTransmit('e');
+	uartTransmit('s');
+	uartTransmit('t');
+	uartTransmit('\n');
+	uartTransmit('\r');
 
 	while(1){
 		//wait for measurement trigger

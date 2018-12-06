@@ -9,15 +9,29 @@
 
 #include "uart.h"
 
-void uartInit(void)
+void uartInit(unsigned int baudRate)
 {
-	UCSRA= 0x00;                 // Clear the UASRT status register
-    UCSRB= (1<<RXEN) | (1<<TXEN);     // Enable Receiver and Transmitter
-	UCSRC= (1<<URSEL) | (1<<UCSZ1) | (1<<UCSZ0);   // Async-mode
+	uint32_t ubrr;
 
-	uartSetBaudRate(9600);
+	UCSRA= 0x00;                 // Clear the UASRT status register
+
+	/*calculate ubrr register value*/
+	ubrr = FOSC/16/baudRate-1;
+
+	/*Set baud rate */
+	UBRRH = (unsigned char)(ubrr>>8);
+	UBRRL = (unsigned char)ubrr;
+
+	/* Enable receiver and transmitter */
+	UCSRB = (1<<RXEN)|(1<<TXEN);
+
+	UCSRC = (1<<URSEL) | (1<<UCSZ1) | (1<<UCSZ0);   // Async-mode
 }
 
-void uartSetBaudRate(uint32_t baudRate){
-	//TODO:
+void uartTransmit(unsigned char data)
+{
+ /* Wait for empty transmit buffer */
+ while ( !( UCSRA & (1<<UDRE)) );
+ /* Put data into buffer, sends the data */
+ UDR = data;
 }

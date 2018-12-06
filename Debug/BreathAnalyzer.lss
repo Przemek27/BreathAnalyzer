@@ -3,11 +3,11 @@ BreathAnalyzer.elf:     file format elf32-avr
 
 Sections:
 Idx Name          Size      VMA       LMA       File off  Algn
-  0 .text         00000096  00000000  00000000  00000054  2**1
+  0 .text         0000024c  00000000  00000000  00000054  2**1
                   CONTENTS, ALLOC, LOAD, READONLY, CODE
-  1 .stab         00000300  00000000  00000000  000000ec  2**2
+  1 .stab         00000828  00000000  00000000  000002a0  2**2
                   CONTENTS, READONLY, DEBUGGING
-  2 .stabstr      0000067c  00000000  00000000  000003ec  2**0
+  2 .stabstr      00000718  00000000  00000000  00000ac8  2**0
                   CONTENTS, READONLY, DEBUGGING
 
 Disassembly of section .text:
@@ -42,45 +42,343 @@ Disassembly of section .text:
   5a:	d8 e0       	ldi	r29, 0x08	; 8
   5c:	de bf       	out	0x3e, r29	; 62
   5e:	cd bf       	out	0x3d, r28	; 61
-  60:	0e 94 36 00 	call	0x6c	; 0x6c <main>
-  64:	0c 94 49 00 	jmp	0x92	; 0x92 <_exit>
+  60:	0e 94 5a 00 	call	0xb4	; 0xb4 <main>
+  64:	0c 94 24 01 	jmp	0x248	; 0x248 <_exit>
 
 00000068 <__bad_interrupt>:
   68:	0c 94 00 00 	jmp	0	; 0x0 <__vectors>
 
-0000006c <main>:
+0000006c <adcInit>:
+
 #include <avr\io.h>
 
-#define IN 0
-#define OUT 1
+#include "adc.h"
 
-int main(void){
+void adcInit(void){
   6c:	df 93       	push	r29
   6e:	cf 93       	push	r28
   70:	cd b7       	in	r28, 0x3d	; 61
   72:	de b7       	in	r29, 0x3e	; 62
 
-	/*Configure PORTA Pin 0*/
+	ADMUX = (1<<REFS0);		//set reference voltage to AVcc
+  74:	e7 e2       	ldi	r30, 0x27	; 39
+  76:	f0 e0       	ldi	r31, 0x00	; 0
+  78:	80 e4       	ldi	r24, 0x40	; 64
+  7a:	80 83       	st	Z, r24
+	ADMUX |= 1; 			//set port ADC1 as ADC input
+  7c:	a7 e2       	ldi	r26, 0x27	; 39
+  7e:	b0 e0       	ldi	r27, 0x00	; 0
+  80:	e7 e2       	ldi	r30, 0x27	; 39
+  82:	f0 e0       	ldi	r31, 0x00	; 0
+  84:	80 81       	ld	r24, Z
+  86:	81 60       	ori	r24, 0x01	; 1
+  88:	8c 93       	st	X, r24
+	ADCSRA = (1<<ADEN)|(1<<ADPS2)|(ADPS1)|(ADPS0); //Enable ADC with Prescalar=Fcpu/128
+  8a:	e6 e2       	ldi	r30, 0x26	; 38
+  8c:	f0 e0       	ldi	r31, 0x00	; 0
+  8e:	85 e8       	ldi	r24, 0x85	; 133
+  90:	80 83       	st	Z, r24
+}
+  92:	cf 91       	pop	r28
+  94:	df 91       	pop	r29
+  96:	08 95       	ret
+
+00000098 <adcStart>:
+
+void adcStart(void){
+  98:	df 93       	push	r29
+  9a:	cf 93       	push	r28
+  9c:	cd b7       	in	r28, 0x3d	; 61
+  9e:	de b7       	in	r29, 0x3e	; 62
+	ADCSRA |= 1 << ADSC;
+  a0:	a6 e2       	ldi	r26, 0x26	; 38
+  a2:	b0 e0       	ldi	r27, 0x00	; 0
+  a4:	e6 e2       	ldi	r30, 0x26	; 38
+  a6:	f0 e0       	ldi	r31, 0x00	; 0
+  a8:	80 81       	ld	r24, Z
+  aa:	80 64       	ori	r24, 0x40	; 64
+  ac:	8c 93       	st	X, r24
+}
+  ae:	cf 91       	pop	r28
+  b0:	df 91       	pop	r29
+  b2:	08 95       	ret
+
+000000b4 <main>:
+#include "adc.h"
+#include "port.h"
+#include "uart.h"
+
+
+int main(void){
+  b4:	df 93       	push	r29
+  b6:	cf 93       	push	r28
+  b8:	cd b7       	in	r28, 0x3d	; 61
+  ba:	de b7       	in	r29, 0x3e	; 62
+
+	portInit();
+  bc:	0e 94 79 00 	call	0xf2	; 0xf2 <portInit>
+	adcInit();
+  c0:	0e 94 36 00 	call	0x6c	; 0x6c <adcInit>
+	uartInit(4800);
+  c4:	80 ec       	ldi	r24, 0xC0	; 192
+  c6:	92 e1       	ldi	r25, 0x12	; 18
+  c8:	0e 94 8e 00 	call	0x11c	; 0x11c <uartInit>
+
+	uartTransmit('t');
+  cc:	84 e7       	ldi	r24, 0x74	; 116
+  ce:	0e 94 d0 00 	call	0x1a0	; 0x1a0 <uartTransmit>
+	uartTransmit('e');
+  d2:	85 e6       	ldi	r24, 0x65	; 101
+  d4:	0e 94 d0 00 	call	0x1a0	; 0x1a0 <uartTransmit>
+	uartTransmit('s');
+  d8:	83 e7       	ldi	r24, 0x73	; 115
+  da:	0e 94 d0 00 	call	0x1a0	; 0x1a0 <uartTransmit>
+	uartTransmit('t');
+  de:	84 e7       	ldi	r24, 0x74	; 116
+  e0:	0e 94 d0 00 	call	0x1a0	; 0x1a0 <uartTransmit>
+	uartTransmit('\n');
+  e4:	8a e0       	ldi	r24, 0x0A	; 10
+  e6:	0e 94 d0 00 	call	0x1a0	; 0x1a0 <uartTransmit>
+	uartTransmit('\r');
+  ea:	8d e0       	ldi	r24, 0x0D	; 13
+  ec:	0e 94 d0 00 	call	0x1a0	; 0x1a0 <uartTransmit>
+  f0:	ff cf       	rjmp	.-2      	; 0xf0 <main+0x3c>
+
+000000f2 <portInit>:
+
+#include <avr\io.h>
+
+#include "port.h"
+
+void portInit(void){
+  f2:	df 93       	push	r29
+  f4:	cf 93       	push	r28
+  f6:	cd b7       	in	r28, 0x3d	; 61
+  f8:	de b7       	in	r29, 0x3e	; 62
+	/*Configure PORTA Pin 0 - Power On LED*/
 	DDRA |= OUT << PIN0;	//set pin direction as output
-  74:	aa e3       	ldi	r26, 0x3A	; 58
-  76:	b0 e0       	ldi	r27, 0x00	; 0
-  78:	ea e3       	ldi	r30, 0x3A	; 58
-  7a:	f0 e0       	ldi	r31, 0x00	; 0
-  7c:	80 81       	ld	r24, Z
-  7e:	81 60       	ori	r24, 0x01	; 1
-  80:	8c 93       	st	X, r24
+  fa:	aa e3       	ldi	r26, 0x3A	; 58
+  fc:	b0 e0       	ldi	r27, 0x00	; 0
+  fe:	ea e3       	ldi	r30, 0x3A	; 58
+ 100:	f0 e0       	ldi	r31, 0x00	; 0
+ 102:	80 81       	ld	r24, Z
+ 104:	81 60       	ori	r24, 0x01	; 1
+ 106:	8c 93       	st	X, r24
 	PORTA |= 1 << PIN0;		//set pin value to high
-  82:	ab e3       	ldi	r26, 0x3B	; 59
-  84:	b0 e0       	ldi	r27, 0x00	; 0
-  86:	eb e3       	ldi	r30, 0x3B	; 59
-  88:	f0 e0       	ldi	r31, 0x00	; 0
-  8a:	80 81       	ld	r24, Z
-  8c:	81 60       	ori	r24, 0x01	; 1
-  8e:	8c 93       	st	X, r24
-  90:	ff cf       	rjmp	.-2      	; 0x90 <main+0x24>
+ 108:	ab e3       	ldi	r26, 0x3B	; 59
+ 10a:	b0 e0       	ldi	r27, 0x00	; 0
+ 10c:	eb e3       	ldi	r30, 0x3B	; 59
+ 10e:	f0 e0       	ldi	r31, 0x00	; 0
+ 110:	80 81       	ld	r24, Z
+ 112:	81 60       	ori	r24, 0x01	; 1
+ 114:	8c 93       	st	X, r24
 
-00000092 <_exit>:
-  92:	f8 94       	cli
+	/*TODO: configure input pin for button - start adc measure*/
 
-00000094 <__stop_program>:
-  94:	ff cf       	rjmp	.-2      	; 0x94 <__stop_program>
+}
+ 116:	cf 91       	pop	r28
+ 118:	df 91       	pop	r29
+ 11a:	08 95       	ret
+
+0000011c <uartInit>:
+#include <avr\io.h>
+
+#include "uart.h"
+
+void uartInit(unsigned int baudRate)
+{
+ 11c:	df 93       	push	r29
+ 11e:	cf 93       	push	r28
+ 120:	00 d0       	rcall	.+0      	; 0x122 <uartInit+0x6>
+ 122:	00 d0       	rcall	.+0      	; 0x124 <uartInit+0x8>
+ 124:	00 d0       	rcall	.+0      	; 0x126 <uartInit+0xa>
+ 126:	cd b7       	in	r28, 0x3d	; 61
+ 128:	de b7       	in	r29, 0x3e	; 62
+ 12a:	9e 83       	std	Y+6, r25	; 0x06
+ 12c:	8d 83       	std	Y+5, r24	; 0x05
+	uint32_t ubrr;
+
+	UCSRA= 0x00;                 // Clear the UASRT status register
+ 12e:	eb e2       	ldi	r30, 0x2B	; 43
+ 130:	f0 e0       	ldi	r31, 0x00	; 0
+ 132:	10 82       	st	Z, r1
+
+	/*calculate ubrr register value*/
+	ubrr = FOSC/16/baudRate-1;
+ 134:	8d 81       	ldd	r24, Y+5	; 0x05
+ 136:	9e 81       	ldd	r25, Y+6	; 0x06
+ 138:	9c 01       	movw	r18, r24
+ 13a:	40 e0       	ldi	r20, 0x00	; 0
+ 13c:	50 e0       	ldi	r21, 0x00	; 0
+ 13e:	84 e2       	ldi	r24, 0x24	; 36
+ 140:	94 ef       	ldi	r25, 0xF4	; 244
+ 142:	a0 e0       	ldi	r26, 0x00	; 0
+ 144:	b0 e0       	ldi	r27, 0x00	; 0
+ 146:	bc 01       	movw	r22, r24
+ 148:	cd 01       	movw	r24, r26
+ 14a:	0e 94 e7 00 	call	0x1ce	; 0x1ce <__divmodsi4>
+ 14e:	da 01       	movw	r26, r20
+ 150:	c9 01       	movw	r24, r18
+ 152:	01 97       	sbiw	r24, 0x01	; 1
+ 154:	a1 09       	sbc	r26, r1
+ 156:	b1 09       	sbc	r27, r1
+ 158:	89 83       	std	Y+1, r24	; 0x01
+ 15a:	9a 83       	std	Y+2, r25	; 0x02
+ 15c:	ab 83       	std	Y+3, r26	; 0x03
+ 15e:	bc 83       	std	Y+4, r27	; 0x04
+
+	/*Set baud rate */
+	UBRRH = (unsigned char)(ubrr>>8);
+ 160:	e0 e4       	ldi	r30, 0x40	; 64
+ 162:	f0 e0       	ldi	r31, 0x00	; 0
+ 164:	89 81       	ldd	r24, Y+1	; 0x01
+ 166:	9a 81       	ldd	r25, Y+2	; 0x02
+ 168:	ab 81       	ldd	r26, Y+3	; 0x03
+ 16a:	bc 81       	ldd	r27, Y+4	; 0x04
+ 16c:	89 2f       	mov	r24, r25
+ 16e:	9a 2f       	mov	r25, r26
+ 170:	ab 2f       	mov	r26, r27
+ 172:	bb 27       	eor	r27, r27
+ 174:	80 83       	st	Z, r24
+	UBRRL = (unsigned char)ubrr;
+ 176:	e9 e2       	ldi	r30, 0x29	; 41
+ 178:	f0 e0       	ldi	r31, 0x00	; 0
+ 17a:	89 81       	ldd	r24, Y+1	; 0x01
+ 17c:	80 83       	st	Z, r24
+
+	/* Enable receiver and transmitter */
+	UCSRB = (1<<RXEN)|(1<<TXEN);
+ 17e:	ea e2       	ldi	r30, 0x2A	; 42
+ 180:	f0 e0       	ldi	r31, 0x00	; 0
+ 182:	88 e1       	ldi	r24, 0x18	; 24
+ 184:	80 83       	st	Z, r24
+
+	UCSRC = (1<<URSEL) | (1<<UCSZ1) | (1<<UCSZ0);   // Async-mode
+ 186:	e0 e4       	ldi	r30, 0x40	; 64
+ 188:	f0 e0       	ldi	r31, 0x00	; 0
+ 18a:	86 e8       	ldi	r24, 0x86	; 134
+ 18c:	80 83       	st	Z, r24
+}
+ 18e:	26 96       	adiw	r28, 0x06	; 6
+ 190:	0f b6       	in	r0, 0x3f	; 63
+ 192:	f8 94       	cli
+ 194:	de bf       	out	0x3e, r29	; 62
+ 196:	0f be       	out	0x3f, r0	; 63
+ 198:	cd bf       	out	0x3d, r28	; 61
+ 19a:	cf 91       	pop	r28
+ 19c:	df 91       	pop	r29
+ 19e:	08 95       	ret
+
+000001a0 <uartTransmit>:
+
+void uartTransmit(unsigned char data)
+{
+ 1a0:	df 93       	push	r29
+ 1a2:	cf 93       	push	r28
+ 1a4:	0f 92       	push	r0
+ 1a6:	cd b7       	in	r28, 0x3d	; 61
+ 1a8:	de b7       	in	r29, 0x3e	; 62
+ 1aa:	89 83       	std	Y+1, r24	; 0x01
+ /* Wait for empty transmit buffer */
+ while ( !( UCSRA & (1<<UDRE)) );
+ 1ac:	eb e2       	ldi	r30, 0x2B	; 43
+ 1ae:	f0 e0       	ldi	r31, 0x00	; 0
+ 1b0:	80 81       	ld	r24, Z
+ 1b2:	88 2f       	mov	r24, r24
+ 1b4:	90 e0       	ldi	r25, 0x00	; 0
+ 1b6:	80 72       	andi	r24, 0x20	; 32
+ 1b8:	90 70       	andi	r25, 0x00	; 0
+ 1ba:	00 97       	sbiw	r24, 0x00	; 0
+ 1bc:	b9 f3       	breq	.-18     	; 0x1ac <uartTransmit+0xc>
+ /* Put data into buffer, sends the data */
+ UDR = data;
+ 1be:	ec e2       	ldi	r30, 0x2C	; 44
+ 1c0:	f0 e0       	ldi	r31, 0x00	; 0
+ 1c2:	89 81       	ldd	r24, Y+1	; 0x01
+ 1c4:	80 83       	st	Z, r24
+}
+ 1c6:	0f 90       	pop	r0
+ 1c8:	cf 91       	pop	r28
+ 1ca:	df 91       	pop	r29
+ 1cc:	08 95       	ret
+
+000001ce <__divmodsi4>:
+ 1ce:	97 fb       	bst	r25, 7
+ 1d0:	09 2e       	mov	r0, r25
+ 1d2:	05 26       	eor	r0, r21
+ 1d4:	0e d0       	rcall	.+28     	; 0x1f2 <__divmodsi4_neg1>
+ 1d6:	57 fd       	sbrc	r21, 7
+ 1d8:	04 d0       	rcall	.+8      	; 0x1e2 <__divmodsi4_neg2>
+ 1da:	14 d0       	rcall	.+40     	; 0x204 <__udivmodsi4>
+ 1dc:	0a d0       	rcall	.+20     	; 0x1f2 <__divmodsi4_neg1>
+ 1de:	00 1c       	adc	r0, r0
+ 1e0:	38 f4       	brcc	.+14     	; 0x1f0 <__divmodsi4_exit>
+
+000001e2 <__divmodsi4_neg2>:
+ 1e2:	50 95       	com	r21
+ 1e4:	40 95       	com	r20
+ 1e6:	30 95       	com	r19
+ 1e8:	21 95       	neg	r18
+ 1ea:	3f 4f       	sbci	r19, 0xFF	; 255
+ 1ec:	4f 4f       	sbci	r20, 0xFF	; 255
+ 1ee:	5f 4f       	sbci	r21, 0xFF	; 255
+
+000001f0 <__divmodsi4_exit>:
+ 1f0:	08 95       	ret
+
+000001f2 <__divmodsi4_neg1>:
+ 1f2:	f6 f7       	brtc	.-4      	; 0x1f0 <__divmodsi4_exit>
+ 1f4:	90 95       	com	r25
+ 1f6:	80 95       	com	r24
+ 1f8:	70 95       	com	r23
+ 1fa:	61 95       	neg	r22
+ 1fc:	7f 4f       	sbci	r23, 0xFF	; 255
+ 1fe:	8f 4f       	sbci	r24, 0xFF	; 255
+ 200:	9f 4f       	sbci	r25, 0xFF	; 255
+ 202:	08 95       	ret
+
+00000204 <__udivmodsi4>:
+ 204:	a1 e2       	ldi	r26, 0x21	; 33
+ 206:	1a 2e       	mov	r1, r26
+ 208:	aa 1b       	sub	r26, r26
+ 20a:	bb 1b       	sub	r27, r27
+ 20c:	fd 01       	movw	r30, r26
+ 20e:	0d c0       	rjmp	.+26     	; 0x22a <__udivmodsi4_ep>
+
+00000210 <__udivmodsi4_loop>:
+ 210:	aa 1f       	adc	r26, r26
+ 212:	bb 1f       	adc	r27, r27
+ 214:	ee 1f       	adc	r30, r30
+ 216:	ff 1f       	adc	r31, r31
+ 218:	a2 17       	cp	r26, r18
+ 21a:	b3 07       	cpc	r27, r19
+ 21c:	e4 07       	cpc	r30, r20
+ 21e:	f5 07       	cpc	r31, r21
+ 220:	20 f0       	brcs	.+8      	; 0x22a <__udivmodsi4_ep>
+ 222:	a2 1b       	sub	r26, r18
+ 224:	b3 0b       	sbc	r27, r19
+ 226:	e4 0b       	sbc	r30, r20
+ 228:	f5 0b       	sbc	r31, r21
+
+0000022a <__udivmodsi4_ep>:
+ 22a:	66 1f       	adc	r22, r22
+ 22c:	77 1f       	adc	r23, r23
+ 22e:	88 1f       	adc	r24, r24
+ 230:	99 1f       	adc	r25, r25
+ 232:	1a 94       	dec	r1
+ 234:	69 f7       	brne	.-38     	; 0x210 <__udivmodsi4_loop>
+ 236:	60 95       	com	r22
+ 238:	70 95       	com	r23
+ 23a:	80 95       	com	r24
+ 23c:	90 95       	com	r25
+ 23e:	9b 01       	movw	r18, r22
+ 240:	ac 01       	movw	r20, r24
+ 242:	bd 01       	movw	r22, r26
+ 244:	cf 01       	movw	r24, r30
+ 246:	08 95       	ret
+
+00000248 <_exit>:
+ 248:	f8 94       	cli
+
+0000024a <__stop_program>:
+ 24a:	ff cf       	rjmp	.-2      	; 0x24a <__stop_program>
