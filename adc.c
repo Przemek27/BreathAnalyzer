@@ -19,3 +19,23 @@ void adcInit(void){
 void adcStart(void){
 	ADCSRA |= 1 << ADSC;
 }
+
+char adcIsFinished(void){
+	if(ADCSRA & (1 << ADIF))
+		return 1;
+	else
+		return 0;
+}
+
+uint16_t adcMeasure(void){
+	uint16_t result;
+
+	adcStart();
+
+	while(!adcIsFinished());
+
+	result = ADCL;
+	result |= ADCH << 8;
+
+	return result;
+}

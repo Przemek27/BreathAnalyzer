@@ -1,5 +1,7 @@
 Archive member included because of file (symbol)
 
+d:/programy/winavr/bin/../lib/gcc/avr/4.3.3/avr5\libgcc.a(_udivmodqi4.o)
+                              ./utils.o (__udivmodqi4)
 d:/programy/winavr/bin/../lib/gcc/avr/4.3.3/avr5\libgcc.a(_divmodsi4.o)
                               ./uart.o (__divmodsi4)
 d:/programy/winavr/bin/../lib/gcc/avr/4.3.3/avr5\libgcc.a(_exit.o)
@@ -25,6 +27,7 @@ LOAD ./adc.o
 LOAD ./main.o
 LOAD ./port.o
 LOAD ./uart.o
+LOAD ./utils.o
 LOAD d:/programy/winavr/bin/../lib/gcc/avr/4.3.3/avr5\libgcc.a
 LOAD d:/programy/winavr/bin/../lib/gcc/avr/4.3.3/../../../../avr/lib/avr5\libc.a
 LOAD d:/programy/winavr/bin/../lib/gcc/avr/4.3.3/avr5\libgcc.a
@@ -119,7 +122,7 @@ LOAD d:/programy/winavr/bin/../lib/gcc/avr/4.3.3/avr5\libgcc.a
 .rela.plt
  *(.rela.plt)
 
-.text           0x00000000      0x24c
+.text           0x00000000      0x3ba
  *(.vectors)
  .vectors       0x00000000       0x54 d:/programy/winavr/bin/../lib/gcc/avr/4.3.3/../../../../avr/lib/avr5/crtm32.o
                 0x00000000                __vectors
@@ -196,6 +199,8 @@ LOAD d:/programy/winavr/bin/../lib/gcc/avr/4.3.3/avr5\libgcc.a
  .text          0x0000006c        0x0 ./main.o
  .text          0x0000006c        0x0 ./port.o
  .text          0x0000006c        0x0 ./uart.o
+ .text          0x0000006c        0x0 ./utils.o
+ .text          0x0000006c        0x0 d:/programy/winavr/bin/../lib/gcc/avr/4.3.3/avr5\libgcc.a(_udivmodqi4.o)
  .text          0x0000006c        0x0 d:/programy/winavr/bin/../lib/gcc/avr/4.3.3/avr5\libgcc.a(_divmodsi4.o)
  .text          0x0000006c        0x0 d:/programy/winavr/bin/../lib/gcc/avr/4.3.3/avr5\libgcc.a(_exit.o)
  .text          0x0000006c        0x0 d:/programy/winavr/bin/../lib/gcc/avr/4.3.3/avr5\libgcc.a(_udivmodsi4.o)
@@ -206,27 +211,38 @@ LOAD d:/programy/winavr/bin/../lib/gcc/avr/4.3.3/avr5\libgcc.a
  .text.adcStart
                 0x00000098       0x1c ./adc.o
                 0x00000098                adcStart
- .text.main     0x000000b4       0x3e ./main.o
-                0x000000b4                main
+ .text.adcIsFinished
+                0x000000b4       0x2e ./adc.o
+                0x000000b4                adcIsFinished
+ .text.adcMeasure
+                0x000000e2       0x4e ./adc.o
+                0x000000e2                adcMeasure
+ .text.main     0x00000130       0xb0 ./main.o
+                0x00000130                main
  .text.portInit
-                0x000000f2       0x2a ./port.o
-                0x000000f2                portInit
+                0x000001e0       0x2a ./port.o
+                0x000001e0                portInit
  .text.uartInit
-                0x0000011c       0x84 ./uart.o
-                0x0000011c                uartInit
+                0x0000020a       0x84 ./uart.o
+                0x0000020a                uartInit
  .text.uartTransmit
-                0x000001a0       0x2e ./uart.o
-                0x000001a0                uartTransmit
- .text.libgcc   0x000001ce       0x36 d:/programy/winavr/bin/../lib/gcc/avr/4.3.3/avr5\libgcc.a(_divmodsi4.o)
-                0x000001ce                __divmodsi4
- .text.libgcc   0x00000204        0x0 d:/programy/winavr/bin/../lib/gcc/avr/4.3.3/avr5\libgcc.a(_exit.o)
- .text.libgcc   0x00000204       0x44 d:/programy/winavr/bin/../lib/gcc/avr/4.3.3/avr5\libgcc.a(_udivmodsi4.o)
-                0x00000204                __udivmodsi4
-                0x00000248                . = ALIGN (0x2)
+                0x0000028e       0x2e ./uart.o
+                0x0000028e                uartTransmit
+ .text.convertToChar
+                0x000002bc       0x68 ./utils.o
+                0x000002bc                convertToChar
+ .text.libgcc   0x00000324       0x18 d:/programy/winavr/bin/../lib/gcc/avr/4.3.3/avr5\libgcc.a(_udivmodqi4.o)
+                0x00000324                __udivmodqi4
+ .text.libgcc   0x0000033c       0x36 d:/programy/winavr/bin/../lib/gcc/avr/4.3.3/avr5\libgcc.a(_divmodsi4.o)
+                0x0000033c                __divmodsi4
+ .text.libgcc   0x00000372        0x0 d:/programy/winavr/bin/../lib/gcc/avr/4.3.3/avr5\libgcc.a(_exit.o)
+ .text.libgcc   0x00000372       0x44 d:/programy/winavr/bin/../lib/gcc/avr/4.3.3/avr5\libgcc.a(_udivmodsi4.o)
+                0x00000372                __udivmodsi4
+                0x000003b6                . = ALIGN (0x2)
  *(.fini9)
- .fini9         0x00000248        0x0 d:/programy/winavr/bin/../lib/gcc/avr/4.3.3/avr5\libgcc.a(_exit.o)
-                0x00000248                exit
-                0x00000248                _exit
+ .fini9         0x000003b6        0x0 d:/programy/winavr/bin/../lib/gcc/avr/4.3.3/avr5\libgcc.a(_exit.o)
+                0x000003b6                exit
+                0x000003b6                _exit
  *(.fini9)
  *(.fini8)
  *(.fini8)
@@ -245,11 +261,11 @@ LOAD d:/programy/winavr/bin/../lib/gcc/avr/4.3.3/avr5\libgcc.a
  *(.fini1)
  *(.fini1)
  *(.fini0)
- .fini0         0x00000248        0x4 d:/programy/winavr/bin/../lib/gcc/avr/4.3.3/avr5\libgcc.a(_exit.o)
+ .fini0         0x000003b6        0x4 d:/programy/winavr/bin/../lib/gcc/avr/4.3.3/avr5\libgcc.a(_exit.o)
  *(.fini0)
-                0x0000024c                _etext = .
+                0x000003ba                _etext = .
 
-.data           0x00800060        0x0 load address 0x0000024c
+.data           0x00800060        0x0 load address 0x000003ba
                 0x00800060                PROVIDE (__data_start, .)
  *(.data)
  .data          0x00800060        0x0 d:/programy/winavr/bin/../lib/gcc/avr/4.3.3/../../../../avr/lib/avr5/crtm32.o
@@ -257,6 +273,8 @@ LOAD d:/programy/winavr/bin/../lib/gcc/avr/4.3.3/avr5\libgcc.a
  .data          0x00800060        0x0 ./main.o
  .data          0x00800060        0x0 ./port.o
  .data          0x00800060        0x0 ./uart.o
+ .data          0x00800060        0x0 ./utils.o
+ .data          0x00800060        0x0 d:/programy/winavr/bin/../lib/gcc/avr/4.3.3/avr5\libgcc.a(_udivmodqi4.o)
  .data          0x00800060        0x0 d:/programy/winavr/bin/../lib/gcc/avr/4.3.3/avr5\libgcc.a(_divmodsi4.o)
  .data          0x00800060        0x0 d:/programy/winavr/bin/../lib/gcc/avr/4.3.3/avr5\libgcc.a(_exit.o)
  .data          0x00800060        0x0 d:/programy/winavr/bin/../lib/gcc/avr/4.3.3/avr5\libgcc.a(_udivmodsi4.o)
@@ -276,14 +294,16 @@ LOAD d:/programy/winavr/bin/../lib/gcc/avr/4.3.3/avr5\libgcc.a
  .bss           0x00800060        0x0 ./main.o
  .bss           0x00800060        0x0 ./port.o
  .bss           0x00800060        0x0 ./uart.o
+ .bss           0x00800060        0x0 ./utils.o
+ .bss           0x00800060        0x0 d:/programy/winavr/bin/../lib/gcc/avr/4.3.3/avr5\libgcc.a(_udivmodqi4.o)
  .bss           0x00800060        0x0 d:/programy/winavr/bin/../lib/gcc/avr/4.3.3/avr5\libgcc.a(_divmodsi4.o)
  .bss           0x00800060        0x0 d:/programy/winavr/bin/../lib/gcc/avr/4.3.3/avr5\libgcc.a(_exit.o)
  .bss           0x00800060        0x0 d:/programy/winavr/bin/../lib/gcc/avr/4.3.3/avr5\libgcc.a(_udivmodsi4.o)
  *(.bss*)
  *(COMMON)
                 0x00800060                PROVIDE (__bss_end, .)
-                0x0000024c                __data_load_start = LOADADDR (.data)
-                0x0000024c                __data_load_end = (__data_load_start + SIZEOF (.data))
+                0x000003ba                __data_load_start = LOADADDR (.data)
+                0x000003ba                __data_load_end = (__data_load_start + SIZEOF (.data))
 
 .noinit         0x00800060        0x0
                 0x00800060                PROVIDE (__noinit_start, .)
@@ -308,19 +328,21 @@ LOAD d:/programy/winavr/bin/../lib/gcc/avr/4.3.3/avr5\libgcc.a
 .signature
  *(.signature*)
 
-.stab           0x00000000      0x828
+.stab           0x00000000      0xb58
  *(.stab)
- .stab          0x00000000      0x348 ./adc.o
- .stab          0x00000348      0x198 ./main.o
-                                0x354 (size before relaxing)
- .stab          0x000004e0      0x150 ./port.o
+ .stab          0x00000000      0x414 ./adc.o
+ .stab          0x00000414      0x270 ./main.o
+                                0x42c (size before relaxing)
+ .stab          0x00000684      0x150 ./port.o
                                 0x30c (size before relaxing)
- .stab          0x00000630      0x1f8 ./uart.o
+ .stab          0x000007d4      0x1f8 ./uart.o
                                 0x3b4 (size before relaxing)
+ .stab          0x000009cc      0x18c ./utils.o
+                                0x348 (size before relaxing)
 
-.stabstr        0x00000000      0x718
+.stabstr        0x00000000      0x7d4
  *(.stabstr)
- .stabstr       0x00000000      0x718 ./adc.o
+ .stabstr       0x00000000      0x7d4 ./adc.o
 
 .stab.excl
  *(.stab.excl)

@@ -10,26 +10,42 @@
 #include "adc.h"
 #include "port.h"
 #include "uart.h"
-
+#include "utils.h"
 
 int main(void){
+	uint16_t measure;
+	char temp[3];
 
 	portInit();
 	adcInit();
 	uartInit(4800);
 
-	uartTransmit('t');
+	uartTransmit('H');
 	uartTransmit('e');
-	uartTransmit('s');
-	uartTransmit('t');
+	uartTransmit('l');
+	uartTransmit('l');
+	uartTransmit('o');
+	uartTransmit('\n');
+	uartTransmit('\r');
+
+	measure = adcMeasure();
+
+	//send data via UART
+	convertToChar(measure, temp);
+	uartTransmit(temp[2]);
+	uartTransmit(temp[1]);
+	uartTransmit(temp[0]);
+	uartTransmit('\n');
+	uartTransmit('\r');
+	convertToChar(measure >> 8, temp);
+	uartTransmit(temp[2]);
+	uartTransmit(temp[1]);
+	uartTransmit(temp[0]);
 	uartTransmit('\n');
 	uartTransmit('\r');
 
 	while(1){
-		//wait for measurement trigger
-		//adcStart();
-		//wait for conversion finish
-		//send data via UART
+
 	}
 
 	return 0;

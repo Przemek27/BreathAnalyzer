@@ -9,5 +9,8 @@
 #define ADC_H_
 
 void adcInit(void);
+void adcStart(void);
+char adcIsFinished(void);
+uint16_t adcMeasure(void);
 
 #endif /* ADC_H_ */

@@ -7,19 +7,22 @@ C_SRCS += \
 ../adc.c \
 ../main.c \
 ../port.c \
-../uart.c 
+../uart.c \
+../utils.c 
 
 OBJS += \
 ./adc.o \
 ./main.o \
 ./port.o \
-./uart.o 
+./uart.o \
+./utils.o 
 
 C_DEPS += \
 ./adc.d \
 ./main.d \
 ./port.d \
-./uart.d 
+./uart.d \
+./utils.d 
 
 
 # Each subdirectory must supply rules for building sources it contributes
