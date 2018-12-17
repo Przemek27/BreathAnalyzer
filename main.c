@@ -7,10 +7,10 @@
 
 #include <avr\io.h>
 
-#include "adc.h"
-#include "port.h"
-#include "uart.h"
-#include "utils.h"
+#include "Includes/adc.h"
+#include "Includes/port.h"
+#include "Includes/uart.h"
+#include "Includes/utils.h"
 
 int main(void){
 	uint16_t measure;
@@ -20,32 +20,28 @@ int main(void){
 	adcInit();
 	uartInit(4800);
 
-	uartTransmit('H');
-	uartTransmit('e');
-	uartTransmit('l');
-	uartTransmit('l');
-	uartTransmit('o');
-	uartTransmit('\n');
-	uartTransmit('\r');
+	uartSendString("Hello world\n\r", 14);
 
 	measure = adcMeasure();
 
 	//send data via UART
 	convertToChar(measure, temp);
-	uartTransmit(temp[2]);
-	uartTransmit(temp[1]);
-	uartTransmit(temp[0]);
-	uartTransmit('\n');
-	uartTransmit('\r');
+	uartSendChar(temp[2]);
+	uartSendChar(temp[1]);
+	uartSendChar(temp[0]);
+	uartSendChar('\n');
+	uartSendChar('\r');
 	convertToChar(measure >> 8, temp);
-	uartTransmit(temp[2]);
-	uartTransmit(temp[1]);
-	uartTransmit(temp[0]);
-	uartTransmit('\n');
-	uartTransmit('\r');
+	uartSendChar(temp[2]);
+	uartSendChar(temp[1]);
+	uartSendChar(temp[0]);
+	uartSendChar('\n');
+	uartSendChar('\r');
 
 	while(1){
-
+		//if button pushed
+		//trigger adc
+		//TODO: average out measure
 	}
 
 	return 0;

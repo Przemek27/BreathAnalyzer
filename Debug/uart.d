@@ -1,3 +1,3 @@
-uart.o uart.o: ../uart.c ../uart.h
+uart.o uart.o: ../uart.c ../Includes/uart.h
 
-../uart.h:
+../Includes/uart.h:

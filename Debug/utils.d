@@ -1,3 +1,3 @@
-utils.o utils.o: ../utils.c ../utils.h
+utils.o utils.o: ../utils.c ../Includes/utils.h
 
-../utils.h:
+../Includes/utils.h:

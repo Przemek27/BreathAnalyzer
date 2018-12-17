@@ -1,3 +1,3 @@
-adc.o adc.o: ../adc.c ../adc.h
+adc.o adc.o: ../adc.c ../Includes/adc.h
 
-../adc.h:
+../Includes/adc.h:

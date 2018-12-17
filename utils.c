@@ -5,10 +5,9 @@
  *      Author: Przemek
  */
 
-#include "utils.h"
+#include "Includes/utils.h"
 
 
-//FIXME:
 void convertToChar(uint8_t number, char* tab){
 
 	tab[0] = number%10 + '0';		//tab[0] - LSB

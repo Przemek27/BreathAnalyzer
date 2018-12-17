@@ -1,9 +1,10 @@
-main.o main.o: ../main.c ../adc.h ../port.h ../uart.h ../utils.h
+main.o main.o: ../main.c ../Includes/adc.h ../Includes/port.h \
+  ../Includes/uart.h ../Includes/utils.h
 
-../adc.h:
+../Includes/adc.h:
 
-../port.h:
+../Includes/port.h:
 
-../uart.h:
+../Includes/uart.h:
 
-../utils.h:
+../Includes/utils.h:

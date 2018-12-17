@@ -5,9 +5,10 @@
  *      Author: Przemek
  */
 
+#include "Includes/port.h"
+
 #include <avr\io.h>
 
-#include "port.h"
 
 void portInit(void){
 	/*Configure PORTA Pin 0 - Power On LED*/

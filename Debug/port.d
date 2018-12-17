@@ -1,3 +1,3 @@
-port.o port.o: ../port.c ../port.h
+port.o port.o: ../port.c ../Includes/port.h
 
-../port.h:
+../Includes/port.h:

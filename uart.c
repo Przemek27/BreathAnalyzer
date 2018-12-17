@@ -5,9 +5,12 @@
  *      Author: Przemek
  */
 
+#include "Includes/uart.h"
+
 #include <avr\io.h>
 
-#include "uart.h"
+
+//TODO: made UART interrupt driven
 
 void uartInit(unsigned int baudRate)
 {
@@ -28,10 +31,18 @@ void uartInit(unsigned int baudRate)
 	UCSRC = (1<<URSEL) | (1<<UCSZ1) | (1<<UCSZ0);   // Async-mode
 }
 
-void uartTransmit(unsigned char data)
+void uartSendChar(unsigned char data)
 {
  /* Wait for empty transmit buffer */
  while ( !( UCSRA & (1<<UDRE)) );
  /* Put data into buffer, sends the data */
  UDR = data;
+}
+
+void uartSendString(char* str, uint32_t size){
+	uint32_t i;
+
+	for(i=0;i<size;i++){
+		uartSendChar(str[i]);
+	}
 }

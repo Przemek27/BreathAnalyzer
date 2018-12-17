@@ -5,9 +5,12 @@
  *      Author: Przemek
  */
 
+#include "Includes/adc.h"
+
 #include <avr\io.h>
 
-#include "adc.h"
+
+//TODO: make adc interrupt driven
 
 void adcInit(void){
 
