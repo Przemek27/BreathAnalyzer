@@ -11,6 +11,9 @@
 #define IN 0
 #define OUT 1
 
+#define ON 1
+#define OFF 0
+
 void portInit(void);
 
 #endif /* PORT_H_ */

@@ -6,15 +6,17 @@
  */
 
 #include <avr\io.h>
+#include <stdio.h>
 
 #include "Includes/adc.h"
 #include "Includes/port.h"
 #include "Includes/uart.h"
 #include "Includes/utils.h"
+#include "Includes/measure.h"
 
 int main(void){
-	uint16_t measure;
-	char temp[3];
+	uint32_t measure;
+	char *temp = "    ";
 
 	portInit();
 	adcInit();
@@ -24,24 +26,18 @@ int main(void){
 
 	measure = adcMeasure();
 
+	sprintf(temp,"%u",measure);
+
 	//send data via UART
-	convertToChar(measure, temp);
-	uartSendChar(temp[2]);
-	uartSendChar(temp[1]);
-	uartSendChar(temp[0]);
-	uartSendChar('\n');
-	uartSendChar('\r');
-	convertToChar(measure >> 8, temp);
-	uartSendChar(temp[2]);
-	uartSendChar(temp[1]);
-	uartSendChar(temp[0]);
+	uartSendString(temp,4);
 	uartSendChar('\n');
 	uartSendChar('\r');
 
 	while(1){
-		//if button pushed
-		//trigger adc
-		//TODO: average out measure
+		measure = performMeasure();
+		//TODO: light on LEDs
+		//% BAC = breath mg/L * 0.21
+		//TODO: save record in EEPROM
 	}
 
 	return 0;

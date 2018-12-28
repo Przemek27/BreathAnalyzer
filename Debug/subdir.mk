@@ -6,6 +6,7 @@
 C_SRCS += \
 ../adc.c \
 ../main.c \
+../measure.c \
 ../port.c \
 ../uart.c \
 ../utils.c 
@@ -13,6 +14,7 @@ C_SRCS += \
 OBJS += \
 ./adc.o \
 ./main.o \
+./measure.o \
 ./port.o \
 ./uart.o \
 ./utils.o 
@@ -20,6 +22,7 @@ OBJS += \
 C_DEPS += \
 ./adc.d \
 ./main.d \
+./measure.d \
 ./port.d \
 ./uart.d \
 ./utils.d 

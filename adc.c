@@ -30,8 +30,8 @@ char adcIsFinished(void){
 		return 0;
 }
 
-uint16_t adcMeasure(void){
-	uint16_t result;
+uint32_t adcMeasure(void){
+	uint32_t result;
 
 	adcStart();
 
